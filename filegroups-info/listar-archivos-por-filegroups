@@ -2,10 +2,15 @@
 QUERY PARA LISTAR DATAFILES PERTENECIENTES A TODAS LAS BASES DE DATOS
 QUE ALOJAN OBJETOS EN UN DETERMINADO DISCO (P:, H:, ETC)
 */
-select year(fec_acep), month(fec_acep), count(*)
-      from comercio..cex_ivv
-group by year(fec_acep), month(fec_acep)      
-order by year(fec_acep), month(fec_acep)
+select substring(name, 1, 100) name
+	, substring(filename, 1, 200) filename
+	, substring(db_name(dbid), 1, 100) dbname
+	, size/128 'size(MB)'
+	, maxsize
+	, growth
+from master..sysaltfiles
+where filename like '%K:%'
+order by size desc;
 
 /*
 QUERY PARA LISTAR TODOS LOS DATAFILES CONTENIDOS EN EL FILEGROUP DE UNA BASE DE DATOS
