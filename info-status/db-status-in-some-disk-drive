@@ -1,0 +1,11 @@
+/*
+QUERY PARA SABER EL ESTATUS DE LAS DB'S QUE TIENEN DATAFILES
+EN UN DETERMINADO DISCO, P.EJ. EN F:
+*/
+
+SELECT   name
+		,state_desc DatabaseStatus_sysDatabase
+FROM	sys.databases
+WHERE   name IN (select name
+from master..sysaltfiles
+where filename like '%F:%')
