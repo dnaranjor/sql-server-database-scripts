@@ -1,0 +1,18 @@
+/*
+This is the script which I always had in my archive. Following script find out which are the queries running currently on your server.
+*/
+
+SELECT sqltext.TEXT,
+req.session_id,
+req.status,
+req.command,
+req.cpu_time,
+req.total_elapsed_time
+FROM sys.dm_exec_requests req
+CROSS APPLY sys.dm_exec_sql_text(sql_handle) AS sqltext
+
+/*
+While running above query if you find any query which is running for long time it can be killed using following command.
+*/
+
+KILL [session_id]
