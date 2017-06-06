@@ -10,6 +10,7 @@ req.cpu_time,
 req.total_elapsed_time
 FROM sys.dm_exec_requests req
 CROSS APPLY sys.dm_exec_sql_text(sql_handle) AS sqltext
+ORDER BY sqltext.TEXT DESC
 
 /*
 While running above query if you find any query which is running for long time it can be killed using following command.
