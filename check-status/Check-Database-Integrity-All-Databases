@@ -1,0 +1,8 @@
+/*
+
+Check Database Integrity for All Databases of Server
+
+*/
+
+EXEC sp_msforeachdb 'DBCC CHECKDB(''?'')'
+
