@@ -1,0 +1,30 @@
+If you are running an instance of SQL Server 2005 and above then most likely that instance is running the default trace.  
+This default trace is a canned Profiler server side trace that automatically starts up when SQL Server starts.  
+
+Como listar los Autogrowth Events:
+
+DECLARE @path NVARCHAR(260);
+ 
+SELECT 
+   @path = REVERSE(SUBSTRING(REVERSE([path]), 
+   CHARINDEX('\', REVERSE([path])), 260)) + N'log.trc'
+FROM    sys.traces
+WHERE   is_default = 1;
+ 
+SELECT 
+   DatabaseName,
+   [FileName],
+   Duration,
+   StartTime,
+   EndTime,
+   (IntegerData*8)/1024.0 AS GrowthMB,
+   FileType = CASE EventClass 
+       WHEN 92 THEN 'Data'
+       WHEN 93 THEN 'Log'
+   END
+FROM sys.fn_trace_gettable(@path, DEFAULT)
+WHERE
+   EventClass IN (92,93)
+ORDER BY
+   StartTime DESC;
+
