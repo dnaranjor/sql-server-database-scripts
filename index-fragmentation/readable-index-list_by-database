@@ -1,0 +1,20 @@
+# Index fragmentation can be found by querying the built in sys.dm_db_index_physical_stats DMV. 
+# To get readable, useful information you’ll also need to join your query to other DMVs such as sys.indexes and sys.tables.  
+# Below is a simple query that will provide a list of indexes, fragmentation percentage, and record counts for each table in a 
+# database.
+
+SELECT s.[name] +'.'+t.[name]  AS table_name
+ ,i.NAME AS index_name
+ ,index_type_desc
+ ,ROUND(avg_fragmentation_in_percent,2) AS avg_fragmentation_in_percent
+ ,record_count AS table_record_count
+FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, 'SAMPLED') ips
+INNER JOIN sys.tables t on t.[object_id] = ips.[object_id]
+INNER JOIN sys.schemas s on t.[schema_id] = s.[schema_id]
+INNER JOIN sys.indexes i ON (ips.object_id = i.object_id) AND (ips.index_id = i.index_id)
+ORDER BY avg_fragmentation_in_percent DESC
+
+# Output example
+
+Tabla	                                      Indice	                          Tipo	            % Defrag	Cant. Reg.
+HISTORICA_ESTRATEGIA_EMX_MOVIL_60D_NOBORRAR	PK_HISESTEMXMovil60_DownRutOpe11	CLUSTERED INDEX	  38.2	    1388586100
